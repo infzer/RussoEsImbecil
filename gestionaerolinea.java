@@ -35,34 +35,54 @@ public class GestionAerolinea {
         // Ejecuta el código asociado a la opción
         switch (opcion) {
             case 1: // Inicializar aviones y vuelos
-                iniciarAvionesYVuelos();
-                System.out.println("Aviones y vuelos inicializados \n");
+                if (aviones != null) {
+                    iniciarAvionesYVuelos();
+                    System.out.println("Aviones y vuelos inicializados \n");
+                } else {
+                    System.out.println("Aviones y vuelos no inicializados \n");
+                }
                 break;
             case 2: // Reservar asiento en un vuelo
-                Vuelo vuelo = preguntarVuelo();
-                Clase clase = preguntarClase();
-                Avion avion = vuelo.getAvion(); // Obtener el avión asociado al vuelo seleccionado
-                reservarAsiento(avion,clase);
+                if (aviones != null) {
+                    Vuelo vuelo = preguntarVuelo();
+                    Clase clase = preguntarClase();
+                    reservarAsiento(vuelo.getAvion(),clase);
+                } else {
+                    System.out.println("Aviones y vuelos no inicializados \n");
+                }
                 break;
             case 3: // Mostrar el mapa de asientos
-                Vuelo vueloAsientos = preguntarVuelo();
-                Avion avionAsientos = vueloAsientos.getAvion(); // Obtener el avión asociado al vuelo seleccionado
-                avionAsientos.mostrarMapaDeAsientos();
+                if (aviones != null) {
+                    Vuelo vueloAsientos = preguntarVuelo();
+                    vueloAsientos.getAvion().mostrarMapaDeAsientos();
+                } else {
+                    System.out.println("Aviones y vuelos no inicializados \n");
+                }
                 break;
             case 4: // Mostrar la lista de pasajeros
-                Vuelo vueloPasajeros = preguntarVuelo();
-                Avion avionPasajeros = vueloPasajeros.getAvion();
-                mostrarPasajeros(avionPasajeros);
+                if (aviones != null) {
+                    Vuelo vueloPasajeros = preguntarVuelo();
+                    mostrarPasajeros(vueloPasajeros.getAvion());
+                } else {
+                    System.out.println("Aviones y vuelos no inicializados \n");
+                }
                 break;
             case 5: // Mostrar pasajeros menores de 15 años
-                Vuelo vueloMenores = preguntarVuelo();
-                Avion avionMenores = vueloMenores.getAvion();
-                mostrarPasajeros(avionMenores, 15);
+                if (aviones != null) {
+                    Vuelo vueloMenores = preguntarVuelo();
+                    Avion avionMenores = vueloMenores.getAvion();
+                    mostrarPasajeros(avionMenores, 15);
+                } else {
+                    System.out.println("Aviones y vuelos no inicializados \n");
+                }
                 break;
             case 6: // Mostrar ingresos del vuelo
-                Vuelo vueloIngresos = preguntarVuelo();
-                Avion avionIngresos = vueloIngresos.getAvion();
-                mostrarIngresos(avionIngresos);
+                if (aviones != null) {
+                    Vuelo vueloIngresos = preguntarVuelo();
+                    mostrarIngresos(vueloIngresos.getAvion());
+                } else {
+                    System.out.println("Aviones y vuelos no inicializados \n");
+                }
                 break;
             default: // Finalizar
                 System.out.println("Fin de la ejecución.");
@@ -126,17 +146,13 @@ public class GestionAerolinea {
 
             Asiento asientoReservado = null;
 
-            // Buscar el primer asiento libre en la clase especificada
             int numeroFilas = avion.getNumeroFilas(clase);
             int butacasPorFila = avion.getButacasPorFila();
 
-            // Iterar sobre filas y butacas para encontrar el primer asiento libre
             for (int fila = 1; fila <= numeroFilas; fila++) {
                 for (int butaca = 1; butaca <= butacasPorFila; butaca++) {
-                    // Intentar reservar el asiento en la fila y butaca actuales
                     asientoReservado = avion.reservarAsiento(fila, butaca, clase, pasajero);
                     if (asientoReservado != null) {
-                        // Si el asiento fue reservado con éxito, salir de los bucles
                         break;
                     }
                 }
@@ -164,49 +180,52 @@ public class GestionAerolinea {
 
 
         for (int fila = 1; fila <= numeroFilasBusiness; fila++) {
-            boolean filaConPasajeros = false; // Verifica si hay al menos un pasajero en la fila
+            boolean filaConPasajeros = false;
 
             for (int butaca = 1; butaca <= butacasPorFila; butaca++) {
-                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.BUSINESS); // Obtener pasajero en business
-                if (pasajero != null) { // Si hay un pasajero en el asiento
-                    if (!filaConPasajeros) { // Imprimir la fila solo una vez
+                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.BUSINESS);
+                if (pasajero != null) {
+                    if (!filaConPasajeros) {
                         System.out.println("Fila " + fila );
                         filaConPasajeros = true;
                     }
-                    System.out.printf(" %10s %s %d años\n",
+                    System.out.printf("\t\t %-30s %10s %8d años\n",
                             pasajero.getNombre(),
                             pasajero.getPasaporte(),
                             pasajero.getEdad());
-                } else if (filaConPasajeros) { // Si no hay pasajero pero la fila ya tiene ocupación
+                } else if (filaConPasajeros) {
                     System.out.println(" (libre)");
                 }
             }
-            if (filaConPasajeros) System.out.println(); // Espacio después de cada fila con pasajeros
+            if (filaConPasajeros) {
+                System.out.println();
+            }
         }
 
-        // Mostrar pasajeros en clase TURISTA
         System.out.println("Pasajeros en clase TURISTA: \n");
         int numeroFilasTurista = avion.getNumeroFilas(Clase.TURISTA);
 
         for (int fila = 1; fila <= numeroFilasTurista; fila++) {
-            boolean filaConPasajeros = false; // Verifica si hay al menos un pasajero en la fila
+            boolean filaConPasajeros = false;
 
             for (int butaca = 1; butaca <= butacasPorFila; butaca++) {
-                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.TURISTA); // Obtener pasajero en business
-                if (pasajero != null) { // Si hay un pasajero en el asiento
-                    if (!filaConPasajeros) { // Imprimir la fila solo una vez
+                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.TURISTA);
+                if (pasajero != null) {
+                    if (!filaConPasajeros) {
                         System.out.println("Fila " + fila );
                         filaConPasajeros = true;
                     }
-                    System.out.printf("%10s %5s %d años\n",
+                    System.out.printf("\t\t %-30s %10s %8d años\n",
                             pasajero.getNombre(),
                             pasajero.getPasaporte(),
                             pasajero.getEdad());
-                } else if (filaConPasajeros) { // Si no hay pasajero pero la fila ya tiene ocupación
+                } else if (filaConPasajeros) {
                     System.out.println(" (libre)");
                 }
             }
-            if (filaConPasajeros) System.out.println(); // Espacio después de cada fila con pasajeros
+            if (filaConPasajeros) {
+                System.out.println();
+            }
         }
 
 
@@ -222,24 +241,23 @@ public class GestionAerolinea {
 
         for (int fila = 1; fila <= numeroFilasBusiness; fila++) {
             for (int butaca = 1; butaca <= butacasPorFila; butaca++) {
-                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.BUSINESS); // Obtener pasajero en business
-                if (pasajero != null  && pasajero.getEdad() < edad) { // Si hay un pasajero en el asiento
-                    System.out.printf(" %10s %d años\n",
+                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.BUSINESS);
+                if (pasajero != null  && pasajero.getEdad() < edad) {
+                    System.out.printf("\t\t %-30s %8d daños\n",
                             pasajero.getNombre(),
                             pasajero.getEdad());
                 }
             }
         }
 
-        // Mostrar pasajeros en clase TURISTA
         System.out.println("Lista de pasajeros menores de 15 años en clase TURISTA:");
         int numeroFilasTurista = avion.getNumeroFilas(Clase.TURISTA);
 
         for (int fila = 1; fila <= numeroFilasTurista; fila++) {
             for (int butaca = 1; butaca <= butacasPorFila; butaca++) {
-                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.TURISTA); // Obtener pasajero en business
-                if (pasajero != null && pasajero.getEdad() < edad ) { // Si hay un pasajero en el asiento
-                    System.out.printf("%10s %d años\n",
+                Pasajero pasajero = avion.getPasajero(fila , butaca, Clase.TURISTA);
+                if (pasajero != null && pasajero.getEdad() < edad ) {
+                    System.out.printf("\t\t %-30s %8d años\n",
                             pasajero.getNombre(),
                             pasajero.getEdad());
                 }
