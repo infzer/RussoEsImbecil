@@ -1,4 +1,3 @@
-// Rodrigo Piña Rodriguez - bv0124
 import java.util.Scanner;
 
 public class GestionAerolinea {
